@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raciocínio Cirúrgico Interativo</title>
+    <!-- 1. Incluindo o Tailwind CSS para estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Animação de fade-in para os cards */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Estilo base para todos os cards de etapa */
+        .step-card {
+            background-color: white;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+            padding: 1.5rem 2rem; /* p-6 md:p-8 */
+            margin: 1rem auto;
+            max-width: 900px;
+            border: 1px solid #e5e7eb; /* border-gray-200 */
+        }
+
+        /* Estilo para os botões de escolha */
+        .choice-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            margin: 0.5rem;
+            border-radius: 0.5rem; /* rounded-md */
+            font-weight: 600; /* font-semibold */
+            color: white;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .choice-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <!-- Título Principal -->
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Raciocínio Clínico-Cirúrgico Interativo</h1>
+            <p class="text-lg text-gray-600 mt-2">Navegue pelo algoritmo passo a passo.</p>
+            <button
+                onclick="showStep('step-A')"
+                class="mt-4 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-200">
+                Reiniciar Algoritmo
+            </button>
+        </header>
+
+        <!-- Container principal para os cards do fluxograma -->
+        <div id="flowchart-container">
+
+            <!-- ETAPA A: Chegada -->
+            <div id="step-A" class="step-card animate-fade-in">
+                <h2 class="text-2xl font-bold text-center text-gray-900">Chegada do Paciente</h2>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-B')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Iniciar Avaliação
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA B: Fase 1 (X-ABCDE) -->
+            <div id="step-B" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-indigo-700">FASE 1: Estabilização Imediata (X-ABCDE)</h2>
+                <p class="text-gray-700 mt-2">Protocolo de trauma (ATLS/PALS) para identificar e tratar ameaças imediatas à vida.</p>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-C')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Avaliação Concluída
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA C: Paciente Estável? -->
+            <div id="step-C" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-center text-gray-900">X-ABCDE Concluído. Paciente Estável?</h2>
+                <div class="flex justify-center flex-wrap mt-6">
+                    <button onclick="showStep('step-D')" class="choice-button bg-red-600 hover:bg-red-700">
+                        NÃO (Instável)
+                    </button>
+                    <button onclick="showStep('step-E')" class="choice-button bg-green-600 hover:bg-green-700">
+                        SIM (Estável)
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA D: Controle de Danos (INSTÁVEL) -->
+            <div id="step-D" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-red-700">Conduta: Paciente Instável</h2>
+                <p class="text-gray-700 mt-2">Continuar reanimação volêmica, considerar drogas vasoativas. Preparar para cirurgia de controle de danos imediata.</p>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-A')" class="choice-button bg-gray-500 hover:bg-gray-600">
+                        Reiniciar
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA E: Fase 2 (Investigação) -->
+            <div id="step-E" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-green-700">Conduta: Paciente Estável</h2>
+                <p class="text-gray-700 mt-2">Paciente estabilizado. Iniciar FASE 2: Investigação Diagnóstica e Identificação do Contexto Clínico.</p>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-F')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Iniciar Investigação
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA F: Contexto Clínico? -->
+            <div id="step-F" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-center text-gray-900">FASE 2: Qual o Contexto Clínico Principal?</h2>
+                <div class="flex justify-center flex-wrap mt-6">
+                    <button onclick="showStep('step-G')" class="choice-button bg-yellow-600 hover:bg-yellow-700">
+                        Trauma
+                    </button>
+                    <button onclick="showStep('step-H')" class="choice-button bg-purple-600 hover:bg-purple-700">
+                        Oncologia
+                    </button>
+                    <button onclick="showStep('step-I')" class="choice-button bg-cyan-600 hover:bg-cyan-700">
+                        Vascular
+                    </button>
+                    <button onclick="showStep('step-J')" class="choice-button bg-orange-600 hover:bg-orange-700">
+                        Abdome Agudo
+                    </button>
+                </div>
+            </div>
+            
+            <!-- ETAPAS G, H, I, J (Subgrupos) -->
+            
+            <!-- ETAPA G: Trauma -->
+            <div id="step-G" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-yellow-700">Avaliação: Trauma (Agudo)</h2>
+                <ul class="list-disc list-inside text-gray-700 mt-4 space-y-2">
+                    <li><b>Exames Iniciais:</b> Raio-X Tórax/Pélvis, ECO-FAST.</li>
+                    <li><b>Escores Pediátricos:</b> Escala de Coma de Glasgow (Pediátrica), Fita de Broselow.</li>
+                    <li><b>Condutas Específicas:</b>
+                        <ul class="list-disc list-inside ml-6 mt-1">
+                            <li><b>TCE:</b> Avaliar TC de Crânio.</li>
+                            <li><b>Hemotórax Pedi:</b> Indicar toracotomia se drenagem > 20ml/kg.</li>
+                            <li><b>Abdome Pedi:</b> Tentar tratamento conservador se estável e com suporte 24h.</li>
+                            <li><b>Dor Pedi:</b> Ibuprofeno 10mg/kg (superior p/ dor musculoesquelética).</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-K')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Ir para FASE 3 (Conduta)
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA H: Oncologia -->
+            <div id="step-H" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-purple-700">Avaliação: Oncologia</h2>
+                <ul class="list-disc list-inside text-gray-700 mt-4 space-y-2">
+                    <li><b>Exames de Estadiamento:</b> TC, RM, PET-CT. Biópsia (Incisional, Excisional, PAAF) para histologia.</li>
+                    <li><b>Estadiamento (Obrigatório):</b> Sistema TNM (cTNM clínico, pTNM patológico).</li>
+                    <li><b>Definir Estágio:</b> 0 (in situ), I (local), II (local avançado), III (linfonodal), IV (metastático).</li>
+                    <li><b>Princípios Cirúrgicos:</b>
+                        <ul class="list-disc list-inside ml-6 mt-1 font-medium">
+                            <li>"Don't Touch" (Mínima manipulação).</li>
+                            <li>Ligadura Vascular na Origem (PRECOCE).</li>
+                            <li>Ressecção em Bloco e Margens Livres.</li>
+                            <li>Linfadenectomia (Estadiamento e Terapia).</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-K')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Ir para FASE 3 (Conduta)
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA I: Vascular -->
+            <div id="step-I" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-cyan-700">Avaliação: Vascular</h2>
+                <ul class="list-disc list-inside text-gray-700 mt-4 space-y-2">
+                    <li><b>Exame Físico:</b> Palpar TODOS os pulsos.</li>
+                    <li><b>Exame Chave (DAOP):</b> Índice Tornozelo-Braço (ITB).
+                        <ul class="list-disc list-inside ml-6 mt-1">
+                            <li><b>ITB &lt; 0.9:</b> Diagnóstico de DAOP.</li>
+                            <li><b>ITB &lt; 0.3:</b> Dor em repouso.</li>
+                        </ul>
+                    </li>
+                    <li><b>Classificar Úlcera:</b> Arterial (dolorosa, bordas definidas, pés/dedos) vs. Venosa (indolor, hiperpigmentação, maléolo medial).</li>
+                    <li><b>Suspeita de Aneurisma/Dissecção?</b></li>
+                </ul>
+                <div class="text-center mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <h3 class="font-bold text-red-700">Emergência: Dissecção Aórtica (Classificação de Stanford)</h3>
+                    <p class="text-sm text-red-600">Dor torácica súbita, "rasgando", com diferença de pulsos/PA.</p>
+                    <div class="flex justify-center flex-wrap mt-4">
+                        <button onclick="showStep('step-I-A1')" class="choice-button bg-red-600 hover:bg-red-700">
+                            Tipo A (Aorta Ascendente)
+                        </button>
+                        <button onclick="showStep('step-I-A2')" class="choice-button bg-yellow-600 hover:bg-yellow-700">
+                            Tipo B (Pós-Subclávia)
+                        </button>
+                    </div>
+                </div>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-K')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Ir para FASE 3 (Conduta Crônica)
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA J: Abdome Agudo -->
+            <div id="step-J" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-orange-700">Avaliação: Abdome Agudo (Emergência)</h2>
+                 <ul class="list-disc list-inside text-gray-700 mt-4 space-y-2">
+                    <li><b>Exames:</b> TC de Abdome (padrão-ouro p/ maioria), Exames Laboratoriais (Leucograma, Amilase, etc).</li>
+                    <li><b>Princípio (ERAS):</b> Paciente é "estômago cheio".</li>
+                    <li><b>Preparo:</b> Preparo imediato para Laparotomia exploradora (LE).</li>
+                    <li><b>Protocolo ERAS Emergência:</b> Aplicar desde o pré-operatório (Jejum otimizado, se possível) até o intra-op (SRI, Ventilação Protetora, Bloqueio TAP).</li>
+                </ul>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-O')" class="choice-button bg-red-600 hover:bg-red-700">
+                        Indicação Cirúrgica Imediata
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPAS VASCULARES AGUDAS -->
+            <div id="step-I-A1" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-red-700">Stanford TIPO A: CIRURGIA DE URGÊNCIA</h2>
+                <p class="text-gray-700 mt-2">Mortalidade altíssima sem cirurgia. Preparo imediato para sala cirúrgica.</p>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-O')" class="choice-button bg-red-600 hover:bg-red-700">
+                        Preparar Sala Cirúrgica
+                    </button>
+                </div>
+            </div>
+            <div id="step-I-A2" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-yellow-700">Stanford TIPO B: Tratamento Clínico</h2>
+                <p class="text-gray-700 mt-2">Conduta inicial conservadora. Controle pressórico rigoroso (Beta-bloqueador IV é a escolha) em UTI.</p>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-M')" class="choice-button bg-green-600 hover:bg-green-700">
+                        Ir para Conduta Clínica
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA K: Fase 3 (Conduta) -->
+            <div id="step-K" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-indigo-700">FASE 3: Conduta Definitiva</h2>
+                <p class="text-gray-700 mt-2">Diagnóstico e estadiamento concluídos. Paciente estável e pronto para o plano terapêutico definitivo.</p>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-L')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Definir Abordagem
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA L: Tipo de Abordagem? -->
+            <div id="step-L" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-center text-gray-900">Qual a Abordagem Terapêutica?</h2>
+                <div class="flex justify-center flex-wrap mt-6">
+                    <button onclick="showStep('step-M')" class="choice-button bg-green-600 hover:bg-green-700">
+                        Clínica / Conservadora
+                    </button>
+                    <button onclick="showStep('step-N')" class="choice-button bg-cyan-600 hover:bg-cyan-700">
+                        Endovascular
+                    </button>
+                    <button onclick="showStep('step-O')" class="choice-button bg-red-600 hover:bg-red-700">
+                        Cirúrgica Aberta
+                    </button>
+                </div>
+            </div>
+            
+            <!-- ETAPAS M, N, O (Abordagens) -->
+            
+            <!-- ETAPA M: Clínica -->
+            <div id="step-M" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-green-700">Conduta: Clínica / Conservadora</h2>
+                <p class="text-gray-700 mt-4"><b>Exemplos:</b></p>
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><b>DAOP Estável (Claudicação):</b> Cessação do tabagismo + Exercício supervisionado.</li>
+                    <li><b>Trauma Abdominal Pediátrico:</b> Observação em UTI, exames seriados.</li>
+                    <li><b>Dissecção Tipo B (Não complicada):</b> Controle de PA com Beta-bloqueador.</li>
+                </ul>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-S')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Alta e Seguimento
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA N: Endovascular -->
+            <div id="step-N" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-cyan-700">Conduta: Endovascular</h2>
+                <p class="text-gray-700 mt-4"><b>Exemplos:</b></p>
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><b>DAOP (Isquemia Crítica):</b> Angioplastia com balão ou Stent.</li>
+                    <li><b>Aneurismas:</b> Embolização ou implante de endoprótese.</li>
+                </ul>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-S')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Alta e Seguimento
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA O: Cirúrgica Aberta -->
+            <div id="step-O" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-red-700">Conduta: Cirúrgica Aberta</h2>
+                <p class="text-gray-700 mt-2">Paciente com indicação de cirurgia aberta. Preparo para sala cirúrgica.</p>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-P')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Avançar para Preparo
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA P: Emergência vs Eletiva? -->
+            <div id="step-P" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-center text-gray-900">A Cirurgia é de Emergência ou Eletiva?</h2>
+                <div class="flex justify-center flex-wrap mt-6">
+                    <button onclick="showStep('step-Q')" class="choice-button bg-red-600 hover:bg-red-700">
+                        Emergência
+                    </button>
+                    <button onclick="showStep('step-R')" class="choice-button bg-green-600 hover:bg-green-700">
+                        Eletiva
+                    </button>
+                </div>
+            </div>
+            
+            <!-- ETAPAS Q, R (ERAS) -->
+
+            <!-- ETAPA Q: ERAS Emergência -->
+            <div id="step-Q" class="step-card hidden" style="background-color: #f0fff4;"> <!-- bg-green-50 -->
+                <h2 class="text-2xl font-bold text-green-800">Protocolo: ERAS Emergência</h2>
+                <ul class="list-disc list-inside text-gray-700 mt-4 space-y-2">
+                    <li><b>Pré-op:</b> Jejum otimizado (se possível), profilaxia antibiótica.</li>
+                    <li><b>Intra-op:</b>
+                        <ul class="list-disc list-inside ml-6 mt-1">
+                            <li>Anestesia: <b>Indução de Sequência Rápida (ISR)</b> (p/ "estômago cheio").</li>
+                            <li>Fluidos: <b>Soluções Balanceadas</b> (evitar salina 0.9%).</li>
+                            <li>Analgesia: <b>Bloqueio TAP</b> (reduz opióides).</li>
+                            <li>Ventilação: Protetora (Volume Corrente 6-8ml/kg).</li>
+                        </ul>
+                    </li>
+                    <li><b>Pós-op:</b>
+                        <ul class="list-disc list-inside ml-6 mt-1">
+                            <li><b>Mobilização Precoce</b> (previne TVP, atelectasia).</li>
+                            <li>Controle Glicêmico (Alvo: <b>140-180 mg/dL</b>).</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-S')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Alta e Seguimento
+                    </button>
+                </div>
+            </div>
+
+            <!-- ETAPA R: ERAS Eletiva -->
+            <div id="step-R" class="step-card hidden" style="background-color: #f0fff4;"> <!-- bg-green-50 -->
+                <h2 class="text-2xl font-bold text-green-800">Protocolo: ERAS Eletiva</h2>
+                <ul class="list-disc list-inside text-gray-700 mt-4 space-y-2">
+                    <li><b>Pré-op:</b> Otimização Nutricional, Carga de Carboidrato (abreviação do jejum).</li>
+                    <li><b>Intra-op:</b> Ventilação Protetora, Manutenção da Normotermia, Restrição hídrica (evitar sobrecarga).</li>
+                    <li><b>Pós-op:</b> Dieta Precoce (iniciar no mesmo dia), Analgesia Multimodal (livre de opióides, se possível), Mobilização Precoce.</li>
+                </ul>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-S')" class="choice-button bg-blue-600 hover:bg-blue-700">
+                        Alta e Seguimento
+                    </button>
+                </div>
+            </div>
+            
+            <!-- ETAPA S: Fim -->
+            <div id="step-S" class="step-card hidden">
+                <h2 class="text-2xl font-bold text-center text-indigo-700">Alta e Seguimento</h2>
+                <p class="text-gray-700 mt-4 text-center">O paciente concluiu a fase aguda do tratamento. Iniciar planejamento de acompanhamento ambulatorial, reabilitação e vigilância (oncológica ou vascular).</p>
+                <div class="text-center mt-6">
+                    <button onclick="showStep('step-A')" class="choice-button bg-gray-500 hover:bg-gray-600">
+                        Reiniciar Algoritmo
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3. O JavaScript que controla a lógica -->
+    <script>
+        function showStep(stepId) {
+            // 1. Ocultar todos os cards
+            const allSteps = document.querySelectorAll('.step-card');
+            allSteps.forEach(step => {
+                step.classList.add('hidden');
+                step.classList.remove('animate-fade-in'); // Remover animação para futuras exibições
+            });
+
+            // 2. Mostrar o card alvo
+            const targetStep = document.getElementById(stepId);
+            if (targetStep) {
+                targetStep.classList.remove('hidden');
+                targetStep.classList.add('animate-fade-in'); // Adicionar animação
+                
+                // 3. Rolar a tela para o card que acabou de aparecer (útil em telas pequenas)
+                targetStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // Garantir que a primeira etapa esteja visível no carregamento inicial
+        // (embora já esteja sem a classe 'hidden', isso é uma garantia extra)
+        document.addEventListener('DOMContentLoaded', () => {
+            showStep('step-A');
+        });
+    </script>
+</body>
+</html>
+
